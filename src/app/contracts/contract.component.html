@@ -1,0 +1,445 @@
+<div class="container" id="main-container" style="background-color: white">
+  <h5 style="text-align: center; padding-top: 10px">Contract details</h5>
+  <div class="row" style="margin-bottom: 20px">
+    <ul class="navbar-nav mr-auto">
+      <li class="row">
+        <!-- (click)="onOpenModal(null,'add')" -->
+        <a
+          class="nav-link"
+          (click)="onOpenModalAdd(null, 'addContract')"
+          style="
+            color: rgb(47, 26, 26);
+            background-color: rgb(133, 166, 202);
+            margin-left: 15px;
+          "
+          >&nbsp;<i class="fa fa-plus"></i>&nbsp;Add Contract &nbsp;
+          <span class="sr-only">(current)</span></a
+        >
+        &nbsp; &nbsp;
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input
+        type="search"
+        (ngModelChange)="searchContract(key.value)"
+        #key="ngModel"
+        ngModel
+        name="key"
+        id="searchName"
+        class="form-control mr-sm-2"
+        placeholder="Search Contract by id"
+        required
+      />
+    </form>
+  </div>
+  <!-- <div *ngFor="let contract of contracts" class="col-10"></div> -->
+  <table class="table">
+    <thead>
+      <tr>
+        <th scope="col">ContractID</th>
+        <th scope="col">Start Date</th>
+        <th scope="col">End Date</th>
+        <th scope="col">MarkUp Precentage(%)</th>
+        <th scope="col">Validity</th>
+        <th scope="col">Contract INFO</th>
+      </tr>
+    </thead>
+    <tbody
+      *ngFor="
+        let contract of contracts
+          | paginate : { itemsPerPage: 10, currentPage: page }
+      "
+    >
+      <tr>
+        <th scope="row">{{ contract?.contractId }}</th>
+        <td>{{ contract?.startDate }}</td>
+        <td>{{ contract?.endDate }}</td>
+        <td>{{ contract?.markUp }}</td>
+        <td *ngIf="isContractValid(contract)">Valid</td>
+        <td *ngIf="!isContractValid(contract)">Expired</td>
+        <td
+          (click)="onOpenModal(contract, 'edit')"
+          class="btn btn-primary tooltips"
+          data-placement="top"
+          data-original-title="Edit"
+        >
+          <i class="fa fa-pencil">&nbsp; &nbsp; Edit contract</i>
+        </td>
+
+        <td
+          (click)="onOpenModal(contract, 'delete')"
+          class="btn btn-secondary tooltips"
+          data-placement="top"
+          data-original-title="Delete"
+          style="background-color: red"
+        >
+          <i class="fa fa-times">&nbsp; &nbsp; Delete contract</i>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pagination-controls">
+    <pagination-controls (pageChange)="page = $event"> </pagination-controls>
+  </div>
+  <router-outlet></router-outlet>
+</div>
+
+<!-- Add Contract Modal -->
+<div
+  class="modal fade"
+  id="addContractModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addContractModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addContractModalLabel">
+          Add Contract to {{ hotelName }} ?
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addForm="ngForm" (ngSubmit)="onAddContract(addForm)">
+          <div class="form-group">
+            <label for="hotelId">Hotel ID</label>
+            <input
+              name="hotelId"
+              class="form-control"
+              id="hotelId"
+              [readonly]="true"
+              [ngModel]="hotelId"
+            />
+          </div>
+          <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <input
+              type="date"
+              ngModel
+              name="startDate"
+              class="form-control"
+              id="startDate"
+              placeholder="Start Date"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input
+              type="date"
+              ngModel
+              name="endDate"
+              class="form-control"
+              id="endDate"
+              placeholder="End Date"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="markUp">MarkUp Precentage</label>
+            <input
+              type="number"
+              ngModel
+              name="markUp"
+              class="form-control"
+              id="markUp"
+              placeholder="markUp"
+              required
+            />
+            <!-- localhost:8080/room/hotelId=105 -->
+          </div>
+          <div *ngIf="addForm.invalid && addForm.dirty" class="error-message">
+            **Please fill in all the fields.
+          </div>
+          <div class="modal-footer">
+            <button
+              [disabled]="addForm.invalid"
+              type="submit"
+              class="btn btn-primary"
+            >
+              Save changes
+            </button>
+            <button
+              type="button"
+              id="add-contract-form"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Room Modal -->
+<div
+  class="modal fade"
+  id="addRoomModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="addRoomModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addRoomModalLabel">
+          Add Room to {{ hotelId }} ?
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #addForm="ngForm" (ngSubmit)="onAddRoom(addForm)">
+          <div class="form-group">
+            <label for="hotelId">Hotel ID</label>
+            <input
+              ngModel="{{ hotelId }}"
+              name="hotelId"
+              class="form-control"
+              id="hotelId"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="contractId">contractId</label>
+            <input
+              type="number"
+              ngModel
+              name="contractId"
+              class="form-control"
+              id="contractId"
+              placeholder="contractId"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="roomType">Room Type</label>
+            <input
+              type="text"
+              ngModel
+              name="roomType"
+              class="form-control"
+              id="roomType"
+              placeholder="roomType"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="noOfRooms">No Of Rooms</label>
+            <input
+              type="number"
+              ngModel
+              name="noOfRooms"
+              class="form-control"
+              id="noOfRooms"
+              placeholder="noOfRooms"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="maxPeople">Max People</label>
+            <input
+              type="number"
+              ngModel
+              name="maxPeople"
+              class="form-control"
+              id="maxPeople"
+              placeholder="maxPeople"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="cost">Cost</label>
+            <input
+              type="number"
+              ngModel
+              name="cost"
+              class="form-control"
+              id="cost"
+              placeholder="cost"
+              required
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              id="add-room-form"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Close
+            </button>
+
+            <button
+              [disabled]="addForm.invalid"
+              type="submit"
+              class="btn btn-primary"
+            >
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Modal -->
+<div
+  class="modal fade"
+  id="updateContractModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="contractEditModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="updateContractModalLabel">
+          Edit contract {{ editContract?.contractId }}
+        </h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form #editForm="ngForm">
+          <div class="form-group">
+            <label for="startDate">Start Date </label>
+            <input
+              type="date"
+              ngModel="{{ editContract?.startDate }}"
+              name="startDate"
+              class="form-control"
+              id="startDate"
+              placeholder="startDate"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="endDate">End Date</label>
+            <input
+              type="date"
+              ngModel="{{ editContract?.endDate }}"
+              name="endDate"
+              class="form-control"
+              id="endDate"
+              placeholder="endDate "
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="markUp">MarkUp Precentage(%)</label>
+            <input
+              type="number"
+              ngModel="{{ editContract?.markUp }}"
+              name="markUp"
+              class="form-control"
+              id="markUp"
+              placeholder="markUp"
+            />
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              id=""
+              data-dismiss="modal"
+              class="btn btn-secondary"
+            >
+              Close
+            </button>
+            <button
+              (click)="
+                onUpdateContract(editForm.value, editContract.contractId)
+              "
+              data-dismiss="modal"
+              class="btn btn-primary"
+            >
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Modal -->
+<div
+  class="modal fade"
+  id="deleteContractModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="deleteModelLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModelLabel">Delete contract</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>
+          Are you sure you want to delete Contract
+          {{ deleteContract?.contractId }}?
+        </p>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            No
+          </button>
+          <button
+            (click)="onDeleteContract(deleteContract.contractId)"
+            class="btn btn-danger"
+            data-dismiss="modal"
+          >
+            Yes
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- </div> -->
+
+<!-- Notification for no employees -->
+<div *ngIf="contracts?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">NO CONTRACTS!</h4>
+    <p>No contract were found.</p>
+  </div>
+</div>

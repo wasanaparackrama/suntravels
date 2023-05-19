@@ -1,0 +1,91 @@
+<div class="search-form">
+  <h5 style="text-align: center; padding-top: 10px; padding-bottom: 10px">
+    Search Rooms
+  </h5>
+  <form [formGroup]="searchForm" class="add-form" (ngSubmit)="onSubmit()">
+    <div class="form-control">
+      <label for="checkInDate" style="margin-right: 10px">Check In Date</label>
+      <input
+        type="date"
+        id="checkInDate"
+        formControlName="checkInDate"
+        required
+      />
+    </div>
+
+    <div class="form-control">
+      <label for="noOfNights" style="margin-right: 18px">No of Nights</label>
+      <input formControlName="noOfNights" type="number" required />
+    </div>
+
+    <div style="margin-top: 18px">
+      <label
+        for="RoomRequestCriterias"
+        id="room-requiremts-label"
+        style="
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-weight: bold;
+          font-size: large;
+        "
+        >Room Requirements</label
+      >
+
+      <table>
+        <thead>
+          <th></th>
+          <th>No of Rooms</th>
+          <th>No of Adults</th>
+        </thead>
+
+        <tbody formArrayName="roomRequests">
+          <tr
+            *ngFor="
+              let itemrow of formArr.controls;
+              let i = index;
+              let l = last
+            "
+            [formGroupName]="i"
+          >
+            <td>{{ i + 1 }}</td>
+            <td>
+              <input formControlName="noOfRooms" type="number" required />
+            </td>
+            <td>
+              <input formControlName="noOfAdults" type="number" required />
+            </td>
+
+            <td>
+              <button
+                *ngIf="formArr.controls.length > 1"
+                (click)="deleteRow(i)"
+                class="btn btn-danger"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <button
+        type="button"
+        (click)="addNewRow()"
+        class="btn btn-primary"
+        style="display: block; margin: 0 auto; margin-top: 10px"
+      >
+        Add one
+      </button>
+    </div>
+
+    <div>
+      <input
+        type="submit"
+        value="Search"
+        class="btn btn-block"
+        style="background-color: black; color: antiquewhite; margin-top: 20px"
+      />
+    </div>
+  </form>
+</div>

@@ -1,0 +1,42 @@
+@import url('https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css');
+@import url('https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css');
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: bisque;
+}
+
+
+
+/* Default styles */
+.element {
+  font-size: 16px;
+  padding: 10px;
+}
+
+/* Media query for small screens */
+@media (max-width: 576px) {
+  .element {
+    font-size: 14px;
+    padding: 5px;
+  }
+}
+a {
+  cursor: pointer;
+}
+
+.navbar {
+  margin-bottom: 30px;
+}
+a {
+  color: #707070;
+}
+i {
+  color: white;
+}
+
+a {
+  color: white;
+}

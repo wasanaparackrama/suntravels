@@ -1,0 +1,82 @@
+<div>
+  <div *ngIf="dataSource && dataSource.length > 0">
+    <h2>Search Results</h2>
+    <h5 style="text-align: center;">Available Rooms </h5>
+
+    <!-- <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+      
+      <ng-container matColumnDef="Hotel Name">
+        <th mat-header-cell *matHeaderCellDef>Hotel Name</th>
+        <td mat-cell *matCellDef="let AvailableRoom">
+          {{ AvailableRoom.hotelName }}
+        </td>
+      </ng-container>
+
+     
+      <ng-container matColumnDef="Room Type">
+        <th mat-header-cell *matHeaderCellDef>Room Type</th>
+        <td mat-cell *matCellDef="let AvailableRoom">
+          {{ AvailableRoom.roomType }}
+        </td>
+      </ng-container>
+
+     
+      <ng-container matColumnDef="Maximum Adults Per Room">
+        <th mat-header-cell *matHeaderCellDef>Maximum Adults</th>
+        <td mat-cell *matCellDef="let AvailableRoom">
+          {{ AvailableRoom.maxPeople }}
+        </td>
+      </ng-container>
+
+     
+      <ng-container matColumnDef="No of Rooms">
+        <th mat-header-cell *matHeaderCellDef>No of Rooms</th>
+        <td mat-cell *matCellDef="let AvailableRoom">
+          {{ AvailableRoom.noOfRooms }}
+        </td>
+      </ng-container>
+
+      
+      <ng-container matColumnDef="Final Price">
+        <th mat-header-cell *matHeaderCellDef>Final Price Per Person</th>
+        <td mat-cell *matCellDef="let AvailableRoom">
+          {{ AvailableRoom.markUpPrice }}
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table> -->
+
+    <div class="row">
+      
+      <div class="col-md-4 col-lg-4" *ngFor="let availableRoom of dataSource | paginate: { itemsPerPage: 9, currentPage: page }">
+        <div class="card mb-4">
+        <div class="card-header">
+          <h5 class="card-title">{{ availableRoom.hotelName }}</h5>
+        </div>
+        <img class="card-img-top" [src]="getRandomImage()" alt="Hotel Image">
+        <div class="card-body">
+          <p>Room Type: {{ availableRoom.roomType }}</p>
+          <p>Maximum Adults: {{ availableRoom.maxPeople }}</p>
+          <p>No of Rooms: {{ availableRoom.noOfRooms }}</p>
+          <p>Final Price Per Person: (LKR) {{ availableRoom.markUpPrice }}</p>
+        </div>
+
+      </div>
+    </div>
+    </div>
+    <div class="pagination-controls">
+      <pagination-controls (pageChange)="page = $event"> </pagination-controls>
+    </div>
+
+
+  </div>
+</div>
+
+<div *ngIf="dataSource?.length == 0" class="col-lg-12 col-md-12 col-xl-12">
+  <div class="alert alert-info" role="alert">
+    <h4 class="alert-heading">NO ROOMs!</h4>
+    <p>Rooms Not Available.</p>
+  </div>
+</div>

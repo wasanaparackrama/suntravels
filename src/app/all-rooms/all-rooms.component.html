@@ -1,0 +1,55 @@
+<div class="container" id="main-container" style="background-color: white">
+    <h5 style="text-align: center;padding-top: 10px;">All Room details</h5>
+    <div class="row" style="margin-bottom: 20px">
+      
+      <form class="form-inline my-2 my-lg-0 ml-auto">
+        <input
+          type="search"
+          (ngModelChange)="searchRoom(key.value)"
+          #key="ngModel"
+          ngModel
+          name="key"
+          id="searchName"
+          class="form-control mr-sm-2"
+          placeholder="Search hotel or Room type"
+          required
+          style="width: 250px;"
+        />
+      </form>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">RoomID</th>
+          <th scope="col">Hotel Name</th>
+          <th scope="col">Room Type</th>
+          <th scope="col">No Of Rooms</th>
+          <th scope="col">Max People</th>
+          <th scope="col">Cost (LKR)</th>
+          
+          <th scope="col">Contract Id</th>
+          
+        </tr>
+      </thead>
+      <tbody
+        *ngFor="
+          let room of allRooms | paginate : { itemsPerPage: 10, currentPage: page }
+        "
+      >
+        <tr>
+          <th scope="row">{{ room?.roomId }}</th>
+          <td>{{ room?.hotelName }}</td>
+          <td>{{ room?.roomType }}</td>
+          <td>{{ room?.noOfRooms }}</td>
+          <td>{{ room?.maxPeople }}</td>
+          <td>{{ room?.cost }}</td>
+          
+          <td>{{ room?.contractId }}</td>
+          
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination-controls">
+      <pagination-controls (pageChange)="page = $event"> </pagination-controls>
+    </div>
+  </div>
